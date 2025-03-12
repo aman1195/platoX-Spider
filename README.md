@@ -1,4 +1,4 @@
-# PlatoX AI - DeckInsight
+# PlatoX Spider
 
 An AI-powered pitch deck analysis and investment insights platform that helps investors make data-driven decisions.
 
