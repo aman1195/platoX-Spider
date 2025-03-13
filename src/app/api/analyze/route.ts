@@ -364,170 +364,147 @@ async function analyzeWithOpenAI(text: string): Promise<AnalysisResult> {
   return validatedResult as AnalysisResult
 }
 
+export const maxDuration = 300 // Set max duration to 300 seconds (5 minutes)
+export const dynamic = 'force-dynamic' // Disable static optimization
+
 export async function POST(request: Request) {
   const cookieStore = cookies()
   const supabase = createRouteHandlerClient<Database>({ cookies: () => cookieStore })
   let deckId: string | undefined
 
   try {
-    // Check Content-Type and parse request accordingly
-    const contentType = request.headers.get('content-type')
-    let requestData: { deckId?: string; useTextract?: boolean }
+    // Add timeout to the entire operation
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Analysis timed out')), 290000) // 4m50s timeout
+    })
 
-    if (contentType?.includes('multipart/form-data')) {
-      const formData = await request.formData()
-      requestData = {
-        deckId: formData.get('deckId')?.toString(),
-        useTextract: formData.get('useTextract') === 'true'
-      }
-    } else if (contentType?.includes('application/json')) {
-      requestData = await request.json()
-    } else {
-      return NextResponse.json(
-        { error: 'Content-Type must be either multipart/form-data or application/json' },
-        { status: 400 }
-      )
-    }
+    const analysisPromise = (async () => {
+      // Check Content-Type and parse request accordingly
+      const contentType = request.headers.get('content-type')
+      let requestData: { deckId?: string; useTextract?: boolean }
 
-    deckId = requestData.deckId
-
-    if (!deckId) {
-      return NextResponse.json(
-        { error: 'Deck ID is required' },
-        { status: 400 }
-      )
-    }
-
-    // Get the user's session
-    const { data: { session }, error: authError } = await supabase.auth.getSession()
-    if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
-
-    // Get the pitch deck
-    const { data: deck, error: deckError } = await supabase
-      .from('pitch_decks')
-      .select('*')
-      .eq('id', deckId)
-      .eq('user_id', session.user.id)
-      .single()
-
-    if (deckError || !deck) {
-      console.error('Deck error:', deckError)
-      return NextResponse.json(
-        { error: 'Pitch deck not found' },
-        { status: 404 }
-      )
-    }
-
-    // Verify file type
-    const fileExt = deck.file_url.split('.').pop()?.toLowerCase()
-    if (!fileExt || !SUPPORTED_FILE_TYPES.includes(fileExt)) {
-      return NextResponse.json(
-        { error: 'Unsupported file type' },
-        { status: 400 }
-      )
-    }
-
-    // Update status to processing
-    const { error: updateError } = await supabase
-      .from('pitch_decks')
-      .update({ status: 'processing' })
-      .eq('id', deckId)
-
-    if (updateError) {
-      console.error('Update error:', updateError)
-      return NextResponse.json(
-        { error: 'Failed to update deck status' },
-        { status: 500 }
-      )
-    }
-
-    // Download the file
-    const { data: fileData, error: fileError } = await supabase.storage
-      .from('pitch-decks')
-      .download(deck.file_url)
-
-    if (fileError || !fileData) {
-      console.error('File error:', fileError)
-      return NextResponse.json(
-        { error: 'Failed to download file' },
-        { status: 500 }
-      )
-    }
-
-    try {
-      const fileBuffer = await fileData.arrayBuffer()
-      let extractedText: string
-
-      // Use either PDF.js or Textract based on the flag
-      if (requestData.useTextract) {
-        extractedText = await extractTextFromTextract(fileBuffer)
-      } else {
-        extractedText = await extractTextFromPDF(fileBuffer)
-      }
-
-      if (!extractedText.trim()) {
-        throw new Error('No text could be extracted from the document')
-      }
-
-      // Analyze the extracted text using OpenAI
-      const analysisReport = await analyzeWithOpenAI(extractedText)
-
-      // Create analysis report
-      const { error: reportError } = await supabase
-        .from('analysis_reports')
-        .insert({
-          pitch_deck_id: deckId,
-          content: analysisReport,
-        })
-
-      if (reportError) {
-        console.error('Report error:', reportError)
-        throw new Error('Failed to create analysis report')
-      }
-
-      // Update pitch deck status to completed
-      const { error: finalUpdateError } = await supabase
-        .from('pitch_decks')
-        .update({ status: 'completed' })
-        .eq('id', deckId)
-
-      if (finalUpdateError) {
-        console.error('Final update error:', finalUpdateError)
-        throw new Error('Failed to update deck status to completed')
-      }
-
-      return NextResponse.json({ success: true })
-    } catch (analysisError) {
-      console.error('Analysis error:', analysisError)
-      
-      return NextResponse.json(
-        { error: analysisError instanceof Error ? analysisError.message : 'Failed to analyze document' },
-        { status: 500 }
-      )
-    }
-  } catch (error) {
-    console.error('Error analyzing pitch deck:', error)
-
-    // Update status to failed if we have a deckId
-    if (deckId) {
       try {
+        if (contentType?.includes('multipart/form-data')) {
+          const formData = await request.formData()
+          requestData = {
+            deckId: formData.get('deckId')?.toString(),
+            useTextract: formData.get('useTextract') === 'true'
+          }
+        } else if (contentType?.includes('application/json')) {
+          requestData = await request.json()
+        } else {
+          return NextResponse.json(
+            { error: 'Content-Type must be either multipart/form-data or application/json' },
+            { status: 400 }
+          )
+        }
+
+        deckId = requestData.deckId
+
+        if (!deckId) {
+          return NextResponse.json(
+            { error: 'Deck ID is required' },
+            { status: 400 }
+          )
+        }
+
+        // Get the user's session
+        const { data: { session }, error: authError } = await supabase.auth.getSession()
+        if (authError || !session) {
+          return NextResponse.json(
+            { error: 'Unauthorized' },
+            { status: 401 }
+          )
+        }
+
+        // Update status to processing immediately
         await supabase
           .from('pitch_decks')
-          .update({ status: 'failed' })
+          .update({ status: 'processing' })
           .eq('id', deckId)
-      } catch (updateError) {
-        console.error('Error updating pitch deck status:', updateError)
+
+        // Get the pitch deck
+        const { data: deck, error: deckError } = await supabase
+          .from('pitch_decks')
+          .select('*')
+          .eq('id', deckId)
+          .eq('user_id', session.user.id)
+          .single()
+
+        if (deckError || !deck) {
+          throw new Error('Pitch deck not found')
+        }
+
+        // Download and process the file
+        const { data: fileData, error: fileError } = await supabase.storage
+          .from('pitch-decks')
+          .download(deck.file_url)
+
+        if (fileError || !fileData) {
+          throw new Error('Failed to download file')
+        }
+
+        const fileBuffer = await fileData.arrayBuffer()
+        const extractedText = requestData.useTextract 
+          ? await extractTextFromTextract(fileBuffer)
+          : await extractTextFromPDF(fileBuffer)
+
+        if (!extractedText.trim()) {
+          throw new Error('No text could be extracted from the document')
+        }
+
+        // Analyze the extracted text
+        const analysisReport = await analyzeWithOpenAI(extractedText)
+
+        // Create analysis report
+        const { error: reportError } = await supabase
+          .from('analysis_reports')
+          .insert({
+            pitch_deck_id: deckId,
+            content: analysisReport,
+          })
+
+        if (reportError) {
+          throw new Error('Failed to create analysis report')
+        }
+
+        // Update status to completed
+        await supabase
+          .from('pitch_decks')
+          .update({ status: 'completed' })
+          .eq('id', deckId)
+
+        return NextResponse.json({ success: true })
+      } catch (error) {
+        // Ensure any error is properly formatted
+        const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred'
+        
+        // Update status to failed
+        if (deckId) {
+          await supabase
+            .from('pitch_decks')
+            .update({ status: 'failed' })
+            .eq('id', deckId)
+        }
+
+        return NextResponse.json({ error: errorMessage }, { status: 500 })
       }
+    })()
+
+    // Race between timeout and analysis
+    return await Promise.race([analysisPromise, timeoutPromise])
+  } catch (error) {
+    // Handle timeout and other unexpected errors
+    if (deckId) {
+      await supabase
+        .from('pitch_decks')
+        .update({ status: 'failed' })
+        .eq('id', deckId)
     }
 
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to analyze pitch deck' },
-      { status: 500 }
+      { error: error instanceof Error ? error.message : 'Analysis timed out or failed unexpectedly' },
+      { status: 504 }
     )
   }
 } 

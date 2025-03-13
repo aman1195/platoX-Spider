@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/lib/auth'
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
+const ANALYSIS_TIMEOUT = 300000 // 5 minutes
 
 export function FileUpload() {
   const [uploading, setUploading] = useState(false)
@@ -29,6 +30,8 @@ export function FileUpload() {
         return
       }
 
+      let deckId: string | undefined
+
       try {
         setUploading(true)
         setError(null)
@@ -50,7 +53,6 @@ export function FileUpload() {
           })
 
         if (uploadError) {
-          console.error('Error uploading file:', uploadError)
           throw new Error(uploadError.message || 'Failed to upload file')
         }
 
@@ -66,52 +68,58 @@ export function FileUpload() {
           .select()
           .single()
 
-        if (dbError) {
-          console.error('Error creating record:', dbError)
+        if (dbError || !deck) {
           throw new Error('Failed to create pitch deck record')
         }
 
-        // Trigger analysis
-        const response = await fetch('/api/analyze', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ 
-            deckId: deck.id,
-            useTextract
-          }),
-        })
+        deckId = deck.id
 
-        if (!response.ok) {
-          const errorData = await response.json()
-          throw new Error(errorData.error || 'Failed to start analysis')
-        }
+        // Create AbortController for timeout
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), ANALYSIS_TIMEOUT)
 
-        const result = await response.json()
-        if (!result.success) {
-          throw new Error('Analysis failed to start')
+        try {
+          // Trigger analysis with timeout
+          const response = await fetch('/api/analyze', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+              deckId: deck.id,
+              useTextract
+            }),
+            signal: controller.signal
+          })
+
+          clearTimeout(timeoutId)
+
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({ error: 'Invalid server response' }))
+            throw new Error(errorData.error || `Analysis failed: ${response.status}`)
+          }
+
+          const result = await response.json()
+          if (!result.success) {
+            throw new Error('Analysis failed to start')
+          }
+        } catch (analysisError) {
+          if (analysisError instanceof Error && analysisError.name === 'AbortError') {
+            throw new Error('Analysis timed out. The file may be too large or complex.')
+          }
+          throw analysisError
         }
 
       } catch (err) {
-        console.error('Error uploading file:', err)
-        setError(err instanceof Error ? err.message : 'Failed to upload file. Please try again.')
+        console.error('Error:', err)
+        setError(err instanceof Error ? err.message : 'An unexpected error occurred')
         
-        // If error occurs during upload, update status to failed
-        if (err instanceof Error && err.message.includes('upload')) {
-          const existingDeck = await supabase
+        // Update deck status to failed if we have a deck ID
+        if (deckId) {
+          await supabase
             .from('pitch_decks')
-            .select('id')
-            .eq('title', file.name)
-            .eq('user_id', user.id)
-            .single()
-
-          if (existingDeck?.data?.id) {
-            await supabase
-              .from('pitch_decks')
-              .update({ status: 'failed' })
-              .eq('id', existingDeck.data.id)
-          }
+            .update({ status: 'failed' })
+            .eq('id', deckId)
         }
       } finally {
         setUploading(false)
