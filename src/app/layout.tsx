@@ -23,7 +23,7 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="light">
       <body className={inter.className}>
         <AuthProvider>
           <div className="relative flex min-h-screen flex-col">

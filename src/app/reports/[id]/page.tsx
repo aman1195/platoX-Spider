@@ -1,7 +1,5 @@
 import { Suspense } from 'react'
 import { ReportContent } from './ReportContent'
-import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
 
 interface ReportPageProps {
   params: {

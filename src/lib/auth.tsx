@@ -3,8 +3,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { User } from '@supabase/supabase-js'
 import { supabase } from './supabase'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { Database } from '@/lib/database.types'
 import { useRouter } from 'next/navigation'
 
 type AuthContextType = {

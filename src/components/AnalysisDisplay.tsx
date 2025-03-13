@@ -123,11 +123,11 @@ export function AnalysisDisplay({ analysis }: AnalysisDisplayProps) {
  return (
    <div id="webcrumbs">
      <div className="w-full max-w-[1200px] mx-auto bg-white font-sans">
-       <header className="bg-gradient-to-r from-indigo-700 to-purple-800 py-4 sm:py-6 md:py-8 px-4 sm:px-6 md:px-10 rounded-t-lg shadow-xl">
+       <header className="bg-gradient-to-r from-teal-600 to-emerald-700 py-4 sm:py-6 md:py-8 px-4 sm:px-6 md:px-10 rounded-t-lg shadow-xl">
          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
            <h1 className="text-white text-xl sm:text-2xl md:text-3xl font-bold text-center sm:text-left">AI-Powered Pitch Deck & Investment Analysis</h1>
            <div className="flex space-x-3">
-             <Link href="/dashboard" className="bg-white text-indigo-700 px-4 py-2 rounded-md transition-all transform hover:scale-105 flex items-center hover:shadow-lg">
+             <Link href="/dashboard" className="bg-white text-teal-700 px-4 py-2 rounded-md transition-all transform hover:scale-105 flex items-center hover:shadow-lg">
                <ArrowLeft className="mr-2 h-5 w-5" />
                <span>Back to Dashboard</span>
              </Link>
@@ -140,11 +140,11 @@ export function AnalysisDisplay({ analysis }: AnalysisDisplayProps) {
          {/* Company Overview */}
          <div className="flex flex-col sm:flex-row justify-between mb-6 md:mb-8 gap-4">
            <div>
-             <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Analysis for: <span className="text-indigo-600">{profile.companyName}</span></h2>
+             <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Analysis for: <span className="text-teal-600">{profile.companyName}</span></h2>
              <p className="text-gray-600">{profile.industry} | Last updated: {new Date().toLocaleDateString()}</p>
            </div>
            <div className="flex space-x-3">
-             <button className="flex items-center px-4 py-2 bg-indigo-100 text-indigo-700 rounded-md hover:bg-indigo-200 transition-colors">
+             <button className="flex items-center px-4 py-2 bg-teal-100 text-teal-700 rounded-md hover:bg-teal-200 transition-colors">
                <Share2 className="mr-2 h-5 w-5" />
                <span>Share Report</span>
              </button>
@@ -155,13 +155,13 @@ export function AnalysisDisplay({ analysis }: AnalysisDisplayProps) {
          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
            <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
              <div className="flex items-center mb-4">
-             <FileChartPie className="text-3xl text-indigo-500 mr-3" />
-               <h3 className="text-xl font-bold">Pitch Analysis</h3>
+             <FileChartPie className="text-3xl text-teal-500 mr-3" />
+               <h3 className="text-xl font-bold text-teal-800">Pitch Analysis</h3>
              </div>
              <div className="flex justify-between">
                <div>
                  <p className="text-gray-600 mb-1">Clarity Score:</p>
-                 <p className="text-2xl font-bold text-indigo-600">{clampedExpertConclusion.productViability}/10</p>
+                 <p className="text-2xl font-bold text-teal-600">{clampedExpertConclusion.productViability}/10</p>
                </div>
                <div>
                  <p className="text-gray-600 mb-1">Sentiment:</p>
@@ -179,13 +179,13 @@ export function AnalysisDisplay({ analysis }: AnalysisDisplayProps) {
 
            <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
              <div className="flex items-center mb-4">
-               <DollarSign className="text-3xl text-indigo-500 mr-3" />
+               <DollarSign className="text-3xl text-teal-500 mr-3" />
                <h3 className="text-xl font-bold">Investment Potential</h3>
              </div>
              <div className="flex justify-between">
                <div>
                  <p className="text-gray-600 mb-1">Score:</p>
-                 <p className="text-2xl font-bold text-indigo-600">{clampedExpertConclusion.exitPotential}/10</p>
+                 <p className="text-2xl font-bold text-teal-600">{clampedExpertConclusion.exitPotential}/10</p>
                </div>
                <div>
                  <p className="text-gray-600 mb-1">Exit Potential:</p>
@@ -200,7 +200,7 @@ export function AnalysisDisplay({ analysis }: AnalysisDisplayProps) {
 
            <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
              <div className="flex items-center mb-4">
-               <Target className="text-3xl text-indigo-500 mr-3" />
+               <Target className="text-3xl text-teal-500 mr-3" />
                <h3 className="text-xl font-bold">Market Position</h3>
              </div>
              <div className="flex justify-between">
@@ -262,14 +262,14 @@ export function AnalysisDisplay({ analysis }: AnalysisDisplayProps) {
              <div className="p-4 sm:p-6">
                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                  <div>
-                   <h4 className="text-base sm:text-lg font-semibold text-green-600 flex items-center">
+                   <h4 className="text-base sm:text-lg font-semibold text-teal-600 flex items-center">
                      <CheckCircle2 className="w-5 h-5 mr-2" />
                      Strengths (Pros)
                    </h4>
                    <ul className="space-y-2 mt-4">
                      {strengths.map((strength, index) => (
                        <li key={index} className="flex items-start">
-                         <span className="text-green-500 mr-2 mt-0.5">•</span>
+                         <span className="text-teal-500 mr-2 mt-0.5">•</span>
                          <span>{strength}</span>
                        </li>
                      ))}
@@ -406,7 +406,7 @@ export function AnalysisDisplay({ analysis }: AnalysisDisplayProps) {
                </div>
                <div className="p-4 bg-gray-50 rounded-lg">
                  <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-2">Potential Exit Value</h3>
-                 <p className="text-xl sm:text-2xl font-bold text-green-600">{clampedExitPotential.potentialValue}</p>
+                 <p className="text-xl sm:text-2xl font-bold text-teal-600">{clampedExitPotential.potentialValue}</p>
                </div>
              </div>
            </section>
@@ -424,8 +424,8 @@ export function AnalysisDisplay({ analysis }: AnalysisDisplayProps) {
                    {expertOpinions.map((opinion, index) => (
                      <div key={index} className={index !== expertOpinions.length - 1 ? "border-b border-gray-100 pb-4 sm:pb-5" : ""}>
                        <div className="flex items-start">
-                         <div className="hidden sm:flex w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-indigo-100 items-center justify-center flex-shrink-0">
-                           <Users className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600" />
+                         <div className="hidden sm:flex w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-teal-100 items-center justify-center flex-shrink-0">
+                           <Users className="w-5 h-5 sm:w-6 sm:h-6 text-teal-600" />
                          </div>
                          <div className="sm:ml-4">
                            <h4 className="font-semibold">{opinion.name}</h4>
@@ -451,7 +451,7 @@ export function AnalysisDisplay({ analysis }: AnalysisDisplayProps) {
                      <tbody>
                        <tr className="border-b border-gray-100">
                          <td className="py-3 font-semibold text-gray-700">News/Media</td>
-                         <td className="py-3 text-green-600">{clampedReputationAnalysis.sources.newsMedia.sentiment}</td>
+                         <td className="py-3 text-teal-600">{clampedReputationAnalysis.sources.newsMedia.sentiment}</td>
                          <td className="py-3">{clampedReputationAnalysis.sources.newsMedia.score}/10</td>
                          <td className="py-3 flex">
                            {Array.from({ length: 5 }).map((_, i) => (
@@ -464,7 +464,7 @@ export function AnalysisDisplay({ analysis }: AnalysisDisplayProps) {
                        </tr>
                        <tr className="border-b border-gray-100">
                          <td className="py-3 font-semibold text-gray-700">Social Media</td>
-                         <td className="py-3 text-blue-600">{clampedReputationAnalysis.sources.socialMedia.sentiment}</td>
+                         <td className="py-3 text-teal-600">{clampedReputationAnalysis.sources.socialMedia.sentiment}</td>
                          <td className="py-3">{clampedReputationAnalysis.sources.socialMedia.score}/10</td>
                          <td className="py-3 flex">
                            {Array.from({ length: 5 }).map((_, i) => (
@@ -477,7 +477,7 @@ export function AnalysisDisplay({ analysis }: AnalysisDisplayProps) {
                        </tr>
                        <tr className="border-b border-gray-100">
                          <td className="py-3 font-semibold text-gray-700">Investor Reviews</td>
-                         <td className="py-3 text-green-600">{clampedReputationAnalysis.sources.investorReviews.sentiment}</td>
+                         <td className="py-3 text-teal-600">{clampedReputationAnalysis.sources.investorReviews.sentiment}</td>
                          <td className="py-3">{clampedReputationAnalysis.sources.investorReviews.score}/10</td>
                          <td className="py-3 flex">
                            {Array.from({ length: 5 }).map((_, i) => (
@@ -503,7 +503,7 @@ export function AnalysisDisplay({ analysis }: AnalysisDisplayProps) {
                        </tr>
                        <tr>
                          <td className="py-3 font-bold text-gray-700">Overall</td>
-                         <td className="py-3 text-green-600 font-semibold">{clampedReputationAnalysis.overall.sentiment}</td>
+                         <td className="py-3 text-teal-600 font-semibold">{clampedReputationAnalysis.overall.sentiment}</td>
                          <td className="py-3 font-semibold">{clampedReputationAnalysis.overall.score}/10</td>
                          <td className="py-3 flex">
                            {Array.from({ length: 5 }).map((_, i) => (
@@ -529,7 +529,7 @@ export function AnalysisDisplay({ analysis }: AnalysisDisplayProps) {
                    <div className="flex items-center gap-2">
                      <div className="flex-1 h-2 bg-gray-200 rounded-full">
                        <div
-                         className="h-2 rounded-full bg-blue-500"
+                         className="h-2 rounded-full bg-teal-500"
                          style={{ width: `${rating * 10}%` }}
                        />
                      </div>
@@ -586,29 +586,29 @@ export function AnalysisDisplay({ analysis }: AnalysisDisplayProps) {
                <h3 className="text-xl font-bold">Final Verdict</h3>
              </div>
              <div className="p-4 sm:p-6">
-               <div className="bg-indigo-50 rounded-lg p-4 sm:p-5 border-l-4 border-indigo-500">
+               <div className="bg-teal-50 rounded-lg p-4 sm:p-5 border-l-4 border-teal-500">
                  <h4 className="text-lg font-bold mb-2">{profile.companyName}</h4>
                  <p className="text-gray-800 mb-4 text-sm sm:text-base">{finalVerdict.summary}</p>
                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3 sm:gap-4 mt-4 sm:mt-6">
                    <div className="text-center">
                      <p className="text-xs sm:text-sm text-gray-700 mb-1">Product Viability</p>
-                     <p className="font-bold text-indigo-600 text-lg sm:text-xl">{clampedExpertConclusion.productViability}</p>
+                     <p className="font-bold text-teal-600 text-lg sm:text-xl">{clampedExpertConclusion.productViability}</p>
                    </div>
                    <div className="text-center">
                      <p className="text-xs sm:text-sm text-gray-700 mb-1">Market Potential</p>
-                     <p className="font-bold text-indigo-600 text-lg sm:text-xl">{clampedExpertConclusion.marketPotential}</p>
+                     <p className="font-bold text-teal-600 text-lg sm:text-xl">{clampedExpertConclusion.marketPotential}</p>
                    </div>
                    <div className="text-center">
                      <p className="text-xs sm:text-sm text-gray-700 mb-1">Sustainability</p>
-                     <p className="font-bold text-indigo-600 text-lg sm:text-xl">{clampedExpertConclusion.sustainability}</p>
+                     <p className="font-bold text-teal-600 text-lg sm:text-xl">{clampedExpertConclusion.sustainability}</p>
                    </div>
                    <div className="text-center">
                      <p className="text-xs sm:text-sm text-gray-700 mb-1">Innovation</p>
-                     <p className="font-bold text-indigo-600 text-lg sm:text-xl">{clampedExpertConclusion.innovation}</p>
+                     <p className="font-bold text-teal-600 text-lg sm:text-xl">{clampedExpertConclusion.innovation}</p>
                    </div>
                    <div className="text-center">
                      <p className="text-xs sm:text-sm text-gray-700 mb-1">Exit Potential</p>
-                     <p className="font-bold text-indigo-600 text-lg sm:text-xl">{clampedExpertConclusion.exitPotential}</p>
+                     <p className="font-bold text-teal-600 text-lg sm:text-xl">{clampedExpertConclusion.exitPotential}</p>
                    </div>
                    <div className="text-center">
                      <p className="text-xs sm:text-sm text-gray-700 mb-1">Risk Factors</p>
@@ -616,7 +616,7 @@ export function AnalysisDisplay({ analysis }: AnalysisDisplayProps) {
                    </div>
                    <div className="text-center">
                      <p className="text-xs sm:text-sm text-gray-700 mb-1">Competitive Edge</p>
-                     <p className="font-bold text-indigo-600 text-lg sm:text-xl">{clampedExpertConclusion.competitiveAdvantage}</p>
+                     <p className="font-bold text-teal-600 text-lg sm:text-xl">{clampedExpertConclusion.competitiveAdvantage}</p>
                    </div>
                  </div>
                </div>
@@ -630,44 +630,44 @@ export function AnalysisDisplay({ analysis }: AnalysisDisplayProps) {
 }
 
 
-function CompanyInfoCard({ title, content, icon }: { title: string; content?: string; icon: React.ReactNode }) {
- return (
-   <div className="border border-gray-100 rounded-lg p-4">
-     <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
-       {icon}
-       {title}
-     </h3>
-     <p className="text-gray-700">{content || 'N/A'}</p>
-   </div>
- )
-}
+// function CompanyInfoCard({ title, content, icon }: { title: string; content?: string; icon: React.ReactNode }) {
+//  return (
+//    <div className="border border-gray-100 rounded-lg p-4">
+//      <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
+//        {icon}
+//        {title}
+//      </h3>
+//      <p className="text-gray-700">{content || 'N/A'}</p>
+//    </div>
+//  )
+// }
 
 
-function ReputationCard({ source, data, highlight = false }: { source: string; data: ReputationSource; highlight?: boolean }) {
- return (
-   <div className={`p-4 rounded-lg ${highlight ? 'bg-blue-50 border border-blue-100' : 'bg-gray-50'}`}>
-     <h3 className="text-lg font-semibold text-gray-700 mb-2">{formatSourceName(source)}</h3>
-     <div className="space-y-2">
-       <div>
-         <span className="text-sm text-gray-500">Sentiment:</span>
-         <span className="ml-2 font-medium text-gray-900">{data.sentiment}</span>
-       </div>
-       <div>
-         <span className="text-sm text-gray-500">Score:</span>
-         <span className="ml-2 font-medium text-gray-900">{data.score}/10</span>
-       </div>
-       <div className="flex items-center gap-1">
-         {Array.from({ length: 5 }).map((_, i) => (
-           <Star
-             key={i}
-             className={`w-4 h-4 ${i < data.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
-           />
-         ))}
-       </div>
-     </div>
-   </div>
- )
-}
+// function ReputationCard({ source, data, highlight = false }: { source: string; data: ReputationSource; highlight?: boolean }) {
+//  return (
+//    <div className={`p-4 rounded-lg ${highlight ? 'bg-teal-50 border border-teal-100' : 'bg-gray-50'}`}>
+//      <h3 className="text-lg font-semibold text-gray-700 mb-2">{formatSourceName(source)}</h3>
+//      <div className="space-y-2">
+//        <div>
+//          <span className="text-sm text-gray-500">Sentiment:</span>
+//          <span className="ml-2 font-medium text-gray-900">{data.sentiment}</span>
+//        </div>
+//        <div>
+//          <span className="text-sm text-gray-500">Score:</span>
+//          <span className="ml-2 font-medium text-gray-900">{data.score}/10</span>
+//        </div>
+//        <div className="flex items-center gap-1">
+//          {Array.from({ length: 5 }).map((_, i) => (
+//            <Star
+//              key={i}
+//              className={`w-4 h-4 ${i < data.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
+//            />
+//          ))}
+//        </div>
+//      </div>
+//    </div>
+//  )
+// }
 
 
 function DealTermCard({ title, value }: { title: string; value: string }) {

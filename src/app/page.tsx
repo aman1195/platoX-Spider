@@ -7,7 +7,7 @@ export default function Home() {
         <h1 className="text-6xl font-bold text-center mb-8">
           Welcome to {' '}
           <span className="text-blue-600">
-            PlatoX AI - DeckInsight
+            PlatoX Spider
           </span>
         </h1>
         <p className="text-2xl text-center mb-12">
