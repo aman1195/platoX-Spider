@@ -364,7 +364,7 @@ async function analyzeWithOpenAI(text: string): Promise<AnalysisResult> {
   return validatedResult as AnalysisResult
 }
 
-export const maxDuration = 300 // Set max duration to 300 seconds (5 minutes)
+export const maxDuration = 60 // Set max duration to 60 seconds
 export const dynamic = 'force-dynamic' // Disable static optimization
 
 export async function POST(request: Request) {
@@ -375,7 +375,7 @@ export async function POST(request: Request) {
   try {
     // Add timeout to the entire operation
     const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('Analysis timed out')), 290000) // 4m50s timeout
+      setTimeout(() => reject(new Error('Analysis timed out')), 58000) // 58s timeout to ensure we're within Vercel's limit
     })
 
     const analysisPromise = (async () => {

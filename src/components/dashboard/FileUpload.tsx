@@ -7,7 +7,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/lib/auth'
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
-const ANALYSIS_TIMEOUT = 300000 // 5 minutes
+const ANALYSIS_TIMEOUT = 60000 // 60 seconds to match Vercel's limit
 
 export function FileUpload() {
   const [uploading, setUploading] = useState(false)
