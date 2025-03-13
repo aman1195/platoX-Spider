@@ -340,7 +340,8 @@ async function analyzeWithOpenAI(text: string): Promise<AnalysisResult> {
 }
 
 export async function POST(request: Request) {
-  const supabase = createRouteHandlerClient<Database>({ cookies })
+  const cookieStore = cookies()
+  const supabase = createRouteHandlerClient<Database>({ cookies: () => cookieStore })
   let deckId: string | undefined
 
   try {

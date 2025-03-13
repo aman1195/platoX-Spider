@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import { Metadata } from 'next'
 import { siteConfig } from '@/config/site'
 import { AuthProvider } from '@/lib/auth'
+import { ThemeProvider } from '@/components/theme/ThemeProvider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,13 +24,15 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="light">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <AuthProvider>
-          <div className="relative flex min-h-screen flex-col">
-            <div className="flex-1">{children}</div>
-          </div>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <div className="relative flex min-h-screen flex-col">
+              <div className="flex-1">{children}</div>
+            </div>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   )
