@@ -336,7 +336,32 @@ async function analyzeWithOpenAI(text: string): Promise<AnalysisResult> {
   })
 
   const result = JSON.parse(completion.choices[0].message.function_call?.arguments || '{}')
-  return result as AnalysisResult
+  
+  // Ensure all arrays have default values
+  const validatedResult = {
+    ...result,
+    profile: {
+      ...result.profile,
+      keyOfferings: result.profile?.keyOfferings || []
+    },
+    strengthsWeaknesses: {
+      ...result.strengthsWeaknesses,
+      strengths: result.strengthsWeaknesses?.strengths || [],
+      weaknesses: result.strengthsWeaknesses?.weaknesses || []
+    },
+    competitors: result.competitors || [],
+    fundingHistory: result.fundingHistory || [],
+    expertOpinions: result.expertOpinions || [],
+    suggestedImprovements: result.suggestedImprovements || [],
+    keyInsights: result.keyInsights || [],
+    keyQuestions: result.keyQuestions || [],
+    dealStructure: {
+      ...result.dealStructure,
+      otherTerms: result.dealStructure?.otherTerms || []
+    }
+  }
+
+  return validatedResult as AnalysisResult
 }
 
 export async function POST(request: Request) {
@@ -345,10 +370,26 @@ export async function POST(request: Request) {
   let deckId: string | undefined
 
   try {
-    // Parse request body
-    const body = await request.json()
-    deckId = body.deckId
-    const useTextract = body.useTextract || false
+    // Check Content-Type and parse request accordingly
+    const contentType = request.headers.get('content-type')
+    let requestData: { deckId?: string; useTextract?: boolean }
+
+    if (contentType?.includes('multipart/form-data')) {
+      const formData = await request.formData()
+      requestData = {
+        deckId: formData.get('deckId')?.toString(),
+        useTextract: formData.get('useTextract') === 'true'
+      }
+    } else if (contentType?.includes('application/json')) {
+      requestData = await request.json()
+    } else {
+      return NextResponse.json(
+        { error: 'Content-Type must be either multipart/form-data or application/json' },
+        { status: 400 }
+      )
+    }
+
+    deckId = requestData.deckId
 
     if (!deckId) {
       return NextResponse.json(
@@ -399,7 +440,10 @@ export async function POST(request: Request) {
 
     if (updateError) {
       console.error('Update error:', updateError)
-      throw new Error('Failed to update deck status')
+      return NextResponse.json(
+        { error: 'Failed to update deck status' },
+        { status: 500 }
+      )
     }
 
     // Download the file
@@ -409,7 +453,10 @@ export async function POST(request: Request) {
 
     if (fileError || !fileData) {
       console.error('File error:', fileError)
-      throw new Error('Failed to download file')
+      return NextResponse.json(
+        { error: 'Failed to download file' },
+        { status: 500 }
+      )
     }
 
     try {
@@ -417,7 +464,7 @@ export async function POST(request: Request) {
       let extractedText: string
 
       // Use either PDF.js or Textract based on the flag
-      if (useTextract) {
+      if (requestData.useTextract) {
         extractedText = await extractTextFromTextract(fileBuffer)
       } else {
         extractedText = await extractTextFromPDF(fileBuffer)
@@ -466,7 +513,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Error analyzing pitch deck:', error)
 
-    // Update status to failed
+    // Update status to failed if we have a deckId
     if (deckId) {
       try {
         await supabase

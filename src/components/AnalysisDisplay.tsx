@@ -239,7 +239,7 @@ export function AnalysisDisplay({ analysis }: AnalysisDisplayProps) {
                      <td className="py-3 font-semibold text-gray-700">Business Model</td>
                      <td className="py-3">{profile.businessModel}</td>
                      <td className="py-3 font-semibold text-gray-700">Key Offerings</td>
-                     <td className="py-3">{profile.keyOfferings?.join(', ')}</td>
+                     <td className="py-3">{Array.isArray(profile.keyOfferings) ? profile.keyOfferings.join(', ') : 'N/A'}</td>
                    </tr>
                    <tr>
                      <td className="py-3 font-semibold text-gray-700">Market Position</td>
@@ -313,7 +313,7 @@ export function AnalysisDisplay({ analysis }: AnalysisDisplayProps) {
                      <tr key={index} className="border-b border-gray-100 hover:bg-slate-50 transition-colors">
                        <td className="py-3">{round.round}</td>
                        <td className="py-3">{round.amount}</td>
-                       <td className="py-3">{round.investors.join(', ')}</td>
+                       <td className="py-3">{Array.isArray(round.investors) ? round.investors.join(', ') : 'N/A'}</td>
                        <td className="py-3">{round.status}</td>
                      </tr>
                    ))}
@@ -344,7 +344,7 @@ export function AnalysisDisplay({ analysis }: AnalysisDisplayProps) {
                    {competitors.map((competitor, index) => (
                      <tr key={index} className="border-b border-gray-100 hover:bg-slate-50 transition-colors">
                        <td className="py-3 font-semibold">{competitor.name}</td>
-                       <td className="py-3">{competitor.keyInvestors?.join(', ')}</td>
+                       <td className="py-3">{Array.isArray(competitor.keyInvestors) ? competitor.keyInvestors.join(', ') : 'N/A'}</td>
                        <td className="py-3">{competitor.amountRaised}</td>
                        <td className="py-3">{competitor.marketPosition}</td>
                        <td className="py-3">Enterprise market dominance</td>
